@@ -67,6 +67,18 @@ npm run build
 
 Outputs to `dist/`. The backend (`main.py`) serves this directory directly at its root URL when present, so a production deploy is just backend + this build, no separate frontend server.
 
+## Pointing this at a backend
+
+Copy `.env.example` to `.env` and set `VITE_API_URL` — but most setups don't need to:
+
+| Setup | `VITE_API_URL` |
+|---|---|
+| Local dev (`npm run dev`) | leave empty — `vite.config.js` proxies to `localhost:8000` |
+| Production, backend serves this build (`main.py`'s static mount) | leave empty — same origin, no base URL needed |
+| Frontend deployed separately from the backend (Vercel/Netlify, etc.) | set to the backend's full URL, e.g. `https://api.your-domain.com` |
+
+If you do set it, add that same frontend origin to `allow_origins` in the backend's `main.py` CORS config — otherwise the browser blocks every request.
+
 ## Backend
 
 Expects the FastAPI backend from [`rag-chat-system`](https://github.com/RahulJ0hn/rag-chat-system) running on `localhost:8000` (CORS is already configured there for `localhost:5173`). See that repo for backend setup (Docker Compose for Qdrant/Redis, `.env`, `uvicorn`).
